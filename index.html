@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PerFeX - Research on Personality-Driven 3D Facial Animation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>PerFeX: Personality of a Facial Expression</h1>
+        <h2>An Iterative Approach to Build a Semantic Dataset for Facial Expression of Personality</h2>
+        <h2>(Accepted at <a href="https://sgmig.hosting.acm.org/mig-2024/">ACM MIG 2024)</a></h2>
+    
+        <p>University of Massachusetts Boston</p>
+        <p>Author: Satya Naga Srikar Kodavati, Anish Kanade, Wilhen ALberto Hui Mei and Funda Durupinar</p>
+        <div class="buttons">
+            <button onclick="window.open('//dl.acm.org/doi/abs/10.1145/3677388.3696333')">
+                <i class="fas fa-file-alt"></i> Paper
+            </button>
+            <button onclick="window.open('//github.com/kodavatiSrikar/PerFeX-Personality-of-a-Facial-Expression/tree/main')">
+                <i class="fab fa-github"></i> Code
+            </button>
+            <button onclick="window.open('//drive.google.com/uc?export=download&id=1ffTxpuMnoXqcc5ND1J36r7rlpbpYiz0-')">
+                <i class="fas fa-database"></i> DataSet
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="abstract">
+            <h2>Abstract</h2>
+            <p>​​In this research, we show the representation of facial expressions, an important component of non-verbal cues. Facial expressions demonstrate aspects like the behavior and personality of a person. Facial vlogging videos focus on audiovisual data for human behavior analysis. Though these datasets contain varied 
+                data classes, there needs to be a proper explanation describing the relation between personality and vlogging videos in the sense of algorithmic approaches.  The goal is to create a novel and standardized dataset instead of large amounts of video collection of faces, which are raw facial data difficult to access and process for designing a machine learning model. We extract facial action units and context from the facial dataset, ensuring the quality and relevance of the dataset for personality and human behavior-based research purposes. Through this work, we contribute to developing a more effective and usable set of features that equip the models for personality detection and facial expression analysis.
+                This paper automates the process of personality extraction based on facial expressions with good accuracy.
+                </p>
+        </section>
+
+        <section id="methodology">
+            <h2>Methodology</h2>
+        
+            <h3>Video Collection</h3>
+            <p>The first step in the process is to collect videos that meet specific criteria for personality analysis. Two main factors are considered: the presence of visual aspects of a person speaking and the depiction of a particular personality. Various categories are included to capture diverse personality expressions, such as vlogging, monologues, stand-up comedy, online meetings, lectures, motivational podcasts, and talk shows. Each category highlights unique behavior—vlogging showcases personal storytelling, monologues allow introspection, stand-up comedy offers observational humor, while online meetings, lectures, and podcasts show professionalism and empathy. Talk shows enable engaging conversations. Videos are extracted from YouTube using usernames of selected content creators, with 10 videos per user manually filtered. The final dataset includes 1,500 videos from 180 users, totaling approximately 750 hours.</p>
+            <br />
+
+            <h3>Action Units</h3>
+            <p>Action Units (AUs) data are extracted from the clips using OpenFace, which allows for frame-by-frame analysis of facial expressions.</p>
+            <br />
+
+            <h3>Personality Prediction</h3>
+            <p>The personality prediction process uses extracted action units as sequential data, where each frame is represented as an entry in a time-dependent sequence. To capture the sequential nature of this data, a specialized model architecture is used.</p>
+            <br />
+
+            <h3>Model Architecture</h3>
+            <h4>Attention Model</h4>
+            <p>Since the action unit data is sequential, it requires temporal encoding. Each frame is assigned a timestamp through sinusoidal embeddings, providing temporal context to the model. The action units are transformed into a latent space to capture essential features, and the time embedding is concatenated with these action units to highlight temporal patterns. Short-term patterns and long-term relationships are identified using a combination of 1D convolutions and squeeze-and-excitation blocks, which emphasize important temporal information and feature interactions across variables.</p>
+            <img src="Images/hybrid.png" alt="Hybrid Model Diagram for Personality Prediction">
+            <br />
+
+            <p>To capture long-range dependencies, a combination of LSTM and self-attention layers is used. The LSTM layer models time-series dynamics, while the self-attention module outputs an embedding matrix based on attention weights, enhancing sequence representation by focusing on key parts of the sequence.</p>
+            <br />
+            
+            <h4>Multiscale CNN</h4>
+            <p>The multiscale CNN architecture is used to process time-series data with resilience to noise and time-independent feature identification. This model uses a combination of 1D convolution and pooling layers with varying kernel sizes to capture both short- and long-term temporal features. Initial layers focus on local feature extraction with kernels of different sizes (3, 5, 7, and 9), enabling feature detection at various temporal resolutions. The outputs from these kernels are concatenated, then passed through global pooling and fully connected layers, capturing a range of temporal dependencies essential for accurate personality prediction.</p>
+            <img src="Images/cnn.png" alt="Hybrid Model Diagram for Personality Prediction">
+            <br />
+        </section>
+
+        
+        
+        <section id="user-study">
+            <h2>User Study</h2>
+            <p>We demonstrated the relationship between action units and personality traits. Although action units are numerical representations of facial nonverbal cues, we aim to show their resemblance to visual perception. This can be achieved by finding the apparent personality traits which are what a person observes in terms of behavior.</p>
+            <p>One way to obtain apparent personality is by a manual approach, where people observe the behavioral traits from the videos corresponding to action units. This will let us verify the agreeableness of the personality traits predicted based on action units. To extract the exact personality traits, we streamline the viewer observations using a questionnaire. The determination of OCEAN traits has standard questionnaires used for peer review. In this paper, we are using the BFI, which has items dedicated to each trait. Since the original BFI is longer, we use shorter versions like BFI-10, which has been shown to interpret personality traits effectively for viewer surveys.</p>
+        </section>
+
+        
+
+        <section id="retraining">
+            <h2>Retraining</h2>
+            <p>Retraining the models is essential for adapting to newer data distributions. We implemented incremental learning to continuously update the model without resetting weights. This is particularly useful for online learning use cases with newer data. In our case, the new data from user studies is added to the existing dataset, allowing the model to generalize with both old and new data.</p>
+            <p>This retraining approach helps in managing concept drift and ensuring the model captures patterns from updated data distributions without overfitting.</p>
+        </section>
+        <section id = "Dataset">
+            <h2>Dataset</h2>
+            <h3>Action Unites</h3>
+            <p>AU01_r to AU45_r: These columns represent facial action unit intensities, extracted using OpenFace software. Each value ranges from 0 to 1, indicating the level of activation for specific facial muscle movements, such as eyebrow raise, frown, or smile.</p>
+            <p>ID: A unique identifier assigned to each video. This ID remains consistent across all frames extracted from the same video.</p>
+            <p>File: The file name associated with each video. All frames from a single video share the same file name, allowing easy tracking of entries from the same source.</p>
+            
+            <br />
+
+            <h3>Personality Traits (OCEAN)</h3>
+            <p>Extroversion, Neuroticism, Agreeableness, Conscientiousness, Openness: These columns represent scores for personality traits based on the OCEAN (Big Five) model. The values are in discrete steps of 0, 0.25, 0.5, 0.75, and 1, with higher values indicating a stronger presence of that trait.</p>
+        
+
+        </section>
+        <!-- <section id="Action Units">
+            <h2>Action Unites</h2>
+            <p>AU01_r to AU45_r: These columns represent facial action unit intensities, extracted using OpenFace software. Each value ranges from 0 to 1, indicating the level of activation for specific facial muscle movements, such as eyebrow raise, frown, or smile.</p>
+            <p>ID: A unique identifier assigned to each video. This ID remains consistent across all frames extracted from the same video.</p>
+            <p>File: The file name associated with each video. All frames from a single video share the same file name, allowing easy tracking of entries from the same source.</p>
+        </section> -->
+
+        <!-- <section id="Personality Traits (OCEAN)">
+            <h2>Personality Traits (OCEAN)</h2>
+            <p>Extroversion, Neuroticism, Agreeableness, Conscientiousness, Openness: These columns represent scores for personality traits based on the OCEAN (Big Five) model. The values are in discrete steps of 0, 0.25, 0.5, 0.75, and 1, with higher values indicating a stronger presence of that trait.</p>
+        </section> -->
+        
+        <section id="bibtex">
+            <h2>BibTeX</h2>
+            <pre>
+            @inproceedings{kodavati2024iterative,
+                title={An Iterative Approach to Build a Semantic Dataset for Facial Expression of Personality},
+                author={Kodavati, Satya Naga Srikar and Kanade, Anish and Hui Mei, Wilhen Alberto and Durupinar, Funda},
+                booktitle={Proceedings of the 17th ACM SIGGRAPH Conference on Motion, Interaction, and Games},
+                pages={1--11},
+                year={2024}
+                }
+            </pre>
+        </section>
+    </main>
+
+    <footer>
+        
+        <p>Based on resources from the project page. Please credit appropriately if reusing source code.</p>
+    </footer>
+</body>
+</html>
